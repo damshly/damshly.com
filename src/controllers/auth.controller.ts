@@ -64,10 +64,21 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
         // حذف المستخدم من Redis بعد التسجيل الناجح
         await deleteTempUser(token);
+        const accessToken = jwt.sign({ id: user[0].id, role: user[0].account_type }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
+        const refreshToken = jwt.sign({ id: user[0].id }, process.env.JWT_SECRET as string, { expiresIn: "7d" });
 
+        const refreshTokenId = await saveRefreshToken(user[0].id, refreshToken);
+
+        res.cookie("refreshToken", refreshTokenId, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })    
         res.status(201).json({
             message: "Email verified successfully. User registered!",
             user,
+            accessToken
         });
     } catch (error) {
         console.error("Error verifying token:", error);
@@ -84,7 +95,7 @@ export const login = async (req: Request, res: Response) => {
         return
     }
 
-    const accessToken = jwt.sign({ id: user[0].id }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
+    const accessToken = jwt.sign({ id: user[0].id, role: user[0].account_type }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
     const refreshToken = jwt.sign({ id: user[0].id }, process.env.JWT_SECRET as string, { expiresIn: "7d" });
 
     const refreshTokenId = await saveRefreshToken(user[0].id, refreshToken);
