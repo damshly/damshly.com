@@ -3,6 +3,9 @@ import jwt from "jsonwebtoken";
 import { getTempUser, deleteTempUser, saveTempUser} from "../services/redis.Service";
 import { sendVerificationEmail } from "../services/email.Service";
 import { UserService } from "../services/user.Service";
+import { UserModel } from "../models/user.model";
+import { saveRefreshToken, getRefreshToken, deleteRefreshToken } from "../services/redis.Service";
+import bcrypt from "bcrypt";
 interface registerBody {
     username: string;
     email: string;
@@ -72,8 +75,64 @@ export const verifyEmail = async (req: Request, res: Response) => {
     }
 };
 
-export const login = (req: Request, res: Response) => {}
+export const login = async (req: Request, res: Response) => {
+    const { password, email } = req.body;
+    const user = await UserModel.checkPassword(email, password);
 
-export const logout = (req: Request, res: Response) => {}
+    if (!user) {
+        res.status(401).json({ message: "Invalid credentials" });
+        return
+    }
 
-export const refresh = (req: Request, res: Response) => {}
+    const accessToken = jwt.sign({ id: user[0].id }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
+    const refreshToken = jwt.sign({ id: user[0].id }, process.env.JWT_SECRET as string, { expiresIn: "7d" });
+
+    const refreshTokenId = await saveRefreshToken(user[0].id, refreshToken);
+
+    res.cookie("refreshToken", refreshTokenId, {
+        httpOnly: true, // يمنع الوصول إليه عبر JavaScript
+        secure: true, // يجعله يعمل فقط مع HTTPS
+        sameSite: "strict", // يمنع هجمات CSRF
+        maxAge: 7 * 24 * 60 * 60 * 1000, // أسبوع كامل
+    });
+
+    res.status(200).json({ user: user[0], accessToken, message: "successful" });
+};
+
+
+export const logout = async (req: Request, res: Response) => {
+    const refreshTokenId = req.cookies.refreshToken;
+
+    if (refreshTokenId) {
+        await deleteRefreshToken(refreshTokenId);
+    }
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+    });
+
+    res.status(200).json({ message: "Logged out successfully" });
+};
+
+
+export const refreshToken = async (req: Request, res: Response) => {
+    const refreshTokenId = req.cookies.refreshToken; // استرجاع التوكن من الكوكيز
+
+    if (!refreshTokenId) {
+        res.status(403).json({ message: "Refresh token required" });
+        return 
+    }
+
+    const tokenData = await getRefreshToken(refreshTokenId);
+    if (!tokenData) {
+        res.status(403).json({ message: "Invalid refresh token" });
+        return 
+    }
+
+    const newAccessToken = jwt.sign({ id: tokenData.userId }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
+
+    res.status(200).json({ accessToken: newAccessToken });
+};
+

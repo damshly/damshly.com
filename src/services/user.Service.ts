@@ -1,4 +1,4 @@
-import { getUser , updateUser,UserModel } from "../models/user.model";
+import { getUser ,UserModel } from "../models/user.model";
 
 
 export const getUserData = async (type: "id" | "email" | "username", value: string | number) => {
@@ -15,14 +15,11 @@ export const getUserData = async (type: "id" | "email" | "username", value: stri
 };
 
 
-export const updateUserData = async (id: number, data: Partial<Record<string, any>>) => {
-    return await updateUser.update(id, data);
-};
 
 export class UserService {
     static async registerUser(username: string, email: string, password_hash: string) {
         // التحقق من عدم وجود المستخدم مسبقًا
-        const existingUser = await UserModel.getUserByEmail(email);
+        const existingUser = await getUser.byEmail(email);
         if (existingUser) {
             throw new Error("User already exists.");
         }

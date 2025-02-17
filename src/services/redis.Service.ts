@@ -1,5 +1,7 @@
 import Redis from "ioredis";
 import dotenv from "dotenv";
+import { randomUUID } from "crypto";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 
@@ -19,6 +21,23 @@ export const getTempUser = async (token: string) => {
 
 export const deleteTempUser = async (token: string) => {
     await redis.del(`verify:${token}`);
+};
+
+export const saveRefreshToken = async (userId: number, refreshToken: string) => {
+    const tokenId = randomUUID(); // إنشاء معرف فريد لكل Refresh Token
+    const hashedToken = await bcrypt.hash(refreshToken, 10); // تشفير التوكن
+    
+    await redis.setex(`refresh:${tokenId}`, 7 * 24 * 60 * 60, JSON.stringify({ userId, hashedToken }));
+    return tokenId; // إرجاع معرف التوكن وليس التوكن نفسه
+};
+
+export const getRefreshToken = async (tokenId: string) => {
+    const data = await redis.get(`refresh:${tokenId}`);
+    return data ? JSON.parse(data) : null;
+};
+
+export const deleteRefreshToken = async (tokenId: string) => {
+    await redis.del(`refresh:${tokenId}`);
 };
 
 export default redis;

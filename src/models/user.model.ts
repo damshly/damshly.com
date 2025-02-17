@@ -37,60 +37,6 @@ export class getUser{
 
 }
 
-export class updateUser {
-    static update = async (id: number, data: Partial<User>) => {
-        // list of allowed fields
-        const allowedFields = new Set<keyof User>([
-            "first_name", "last_name", "date_of_birth", "bio", 
-            "profile_picture", "location"
-        ]);
-
-        // extract the invalid fields
-        const invalidFields = Object.keys(data).filter((key) => !allowedFields.has(key as keyof User));
-
-        // if there are invalid fields
-        if (invalidFields.length > 0) {
-            return {
-                success: false,
-                message: "you can't update these fields",
-                invalidFields
-            };
-        }
-
-        // filter the data to include only the allowed fields
-        const filteredData: Partial<User> = {};
-        for (const key in data) {
-            if (allowedFields.has(key as keyof User)) {
-                if (data[key as keyof User] !== undefined) {
-                    filteredData[key as keyof User] = data[key as keyof User] as any;
-                }
-            }
-        }
-
-        // if there are no valid data to update
-        if (Object.keys(filteredData).length === 0) {
-            return {
-                success: false,
-                message: "no valid data to update"
-            };
-        }
-
-        // create dynamic query
-        const fields = Object.keys(filteredData).map((key, index) => `${key} = $${index + 1}`).join(", ");
-        const values = Object.values(filteredData);
-
-        // add the id to the values
-        values.push(id);
-        const query = `UPDATE users SET ${fields}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`;
-
-        const { rows } = await pool.query(query, values);
-        return {
-            success: true,
-            message: "User updated successfully",
-            user: rows[0]
-        };
-    };
-}
 
 export class UserModel {
     // ✅ دالة لإنشاء مستخدم جديد مع تخزين كلمة المرور مجزأة
@@ -103,34 +49,22 @@ export class UserModel {
     
         // 🔹 تجزئة كلمة المرور قبل الحفظ
         const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password_hash, saltRounds);
+        user.password_hash = await bcrypt.hash(password_hash, saltRounds);
 
         const { rows } = await pool.query(
             `INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email`,
-            [username, email, hashedPassword]
+            [username, email, user.password_hash]
         );
 
         return rows[0]; // إرجاع المستخدم الذي تم إنشاؤه
     }
 
-    // ✅ دالة لجلب المستخدم عن طريق الإيميل
-    static async getUserByEmail(email: string) {
-        const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-        return rows[0] || null;
-    }
-
-    // ✅ دالة لجلب المستخدم عن طريق اسم المستخدم
-    static async getUserByUsername(username: string) {
-        const { rows } = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
-        return rows[0] || null;
-    }
-
     // ✅ دالة للتحقق من كلمة المرور عند تسجيل الدخول
     static async checkPassword(email: string, password: string) {
-        const user = await UserModel.getUserByEmail(email);
+        const user = await getUser.byEmail(email);
         if (!user) return false; // المستخدم غير موجود
-
-        const isMatch = await bcrypt.compare(password, user.password_hash);
+        const { password_hash } = user[0];
+        const isMatch = await bcrypt.compare(password, password_hash);
         return isMatch ? user : false; // إرجاع المستخدم إذا كانت كلمة المرور صحيحة
     }
 }
