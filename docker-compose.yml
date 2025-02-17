@@ -1,0 +1,56 @@
+version: '3.8'
+
+# تعريف الشبكات
+networks:
+  external:                     # شبكة خارجية (لـ API و MinIO)
+    driver: bridge              # استخدام جسر شبكة افتراضي
+
+services:
+  # PostgreSQL Service
+  postgres:
+    image: postgres:14
+    container_name: postgres_db
+    ports:
+      - "5432:5432"   
+    environment:
+      POSTGRES_USER: ${DB_USER}           # اسم المستخدم من .env
+      POSTGRES_PASSWORD: ${DB_PASSWORD}   # كلمة المرور من .env
+      POSTGRES_DB: ${DB_NAME}             # اسم قاعدة البيانات من .env
+    networks:
+      - external                         # استخدام الشبكة الخارجية
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # تخزين البيانات بشكل دائم
+
+  # Redis Service
+  redis:
+    image: redis:7
+    container_name: redis_cache
+    ports:
+      - "6379:6379"                       # تعريض منفذ Redis للشبكة الخارجية
+    networks:
+      - external                          # استخدام الشبكة الخارجية
+    volumes:
+      - redis_data:/data  
+    command: ["redis-server", "--appendonly", "yes"]                # تخزين البيانات بشكل دائم
+
+  # MinIO Service
+  minio:
+    image: minio/minio:latest
+    container_name: minio_storage
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}     # اسم المستخدم من .env
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY} # كلمة المرور من .env
+    ports:
+      - "9000:9000"                           # تعريض واجهة المستخدم (UI)
+      - "9001:9001"                           # تعريض API
+    networks:
+      - external                             # استخدام الشبكة الخارجية
+    volumes:
+      - minio_data:/data                      # تخزين البيانات بشكل دائم
+    command: server /data --console-address ":9001"
+
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:

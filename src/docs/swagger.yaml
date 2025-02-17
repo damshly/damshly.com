@@ -1,0 +1,23 @@
+openapi: "3.0.0"
+info:
+  title: "My API"
+  description: "API Documentation for my Express project"
+  version: "1.0.0"
+servers:
+  - url: "http://localhost:8080/api"
+
+paths:
+  /auth:
+    get:
+      summary: 
+      tags:
+        - Users
+      responses:
+        200:
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
