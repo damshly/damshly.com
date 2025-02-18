@@ -1,6 +1,5 @@
 import pool from "../config/database";
 
-
 interface User {
     id: number;
     username: string;
@@ -9,7 +8,7 @@ interface User {
     last_name : string;
     date_of_birth : Date;
     bio : string;
-    updatedAt: Date;
+    updated_at: Date;
     status : string;
     account_type : string;
     is_verified : boolean;
@@ -20,24 +19,20 @@ interface User {
 export class Account{
     static byId = async (id: number) => {
         const { rows } = await pool.query<User>(
-            "SELECT id, username, email, first_name, last_name, date_of_birth, bio, updatedAt, status, account_type, is_verified, profile_picture, location FROM users WHERE id = $1",
+            "SELECT id, username, email, first_name, last_name, date_of_birth, bio, updated_at, status, account_type, is_verified, profile_picture, location FROM users WHERE id = $1",
             [id]
         );
         return rows[0]; // إرجاع المستخدم الواحد فقط
     };
 
     static async update(columns: Partial<User>, id: number) {
+
         const allowedKeys = new Set([
             "username",
-            "email",
             "first_name",
             "last_name",
             "date_of_birth",
             "bio",
-            "updatedAt",
-            "status",
-            "account_type",
-            "is_verified",
             "profile_picture",
             "location"
         ]);
@@ -57,7 +52,7 @@ export class Account{
         if (keys.length === 0) {
             throw new Error("لم يتم إرسال بيانات صحيحة للتحديث");
         }
-
+        
         // بناء الاستعلام
         const query = `
             UPDATE users 
@@ -65,10 +60,14 @@ export class Account{
             WHERE id = $${values.length + 1} 
             RETURNING *;
         `;
-
+        
         // تنفيذ الاستعلام
-        const { rows } = await pool.query<User>(query, [...values, id]);
-
+        await pool.query<User>(query, [...values, id]);
+        const { rows } = await pool.query<User>(
+            "SELECT id, username, email, first_name, last_name, date_of_birth, bio, updated_at, status, account_type, is_verified, profile_picture, location FROM users WHERE id = $1",
+            [id]
+        );
+        
         return rows[0]; // إرجاع المستخدم بعد التحديث
     }
 

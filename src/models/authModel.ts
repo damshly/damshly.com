@@ -7,7 +7,7 @@ export interface User {
     last_name : string;
     date_of_birth : Date;
     bio : string;
-    updatedAt: Date;
+    updated_at: Date;
     last_login : Date;
     status : string;
     account_type : string;

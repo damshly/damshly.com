@@ -15,10 +15,6 @@ interface registerBody {
 export const register = async (req: Request, res: Response) => {
     const { username, email, password } = req.body;
 
-    if (!username || !email || !password) {
-         res.status(400).json({ error: "Invalid data. Please correct your input." });
-    }
-
     const token = jwt.sign({ username, email, password }, process.env.JWT_SECRET as string, {
         expiresIn: "15m",
     });
@@ -129,12 +125,7 @@ export const logout = async (req: Request, res: Response) => {
 
 
 export const refreshToken = async (req: Request, res: Response) => {
-    const refreshTokenId = req.cookies.refreshToken; // استرجاع التوكن من الكوكيز
-
-    if (!refreshTokenId) {
-        res.status(403).json({ message: "Refresh token required" });
-        return 
-    }
+    const refreshTokenId = req.cookies.refreshToken; 
 
     const tokenData = await getRefreshToken(refreshTokenId);
     if (!tokenData) {

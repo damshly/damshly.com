@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { AccountsController } from "../controllers/accounts.controller";
+import { AuthValidation } from "../middleware/auth.validation";
+import { AccountValidation } from "../middleware/account.validation";
+import {upload} from "../middleware/uploadFile"
 const router = Router();
 
-router.get("/",AccountsController.getAccount)
-router.put("/",AccountsController.updateAccount)
-
+router.get("/",AuthValidation.checkJwt,AccountsController.getAccount)
+router.put("/",AuthValidation.checkJwt,AccountValidation.validateUserData,AccountsController.updateAccount)
+router.put("/profilepecture",AuthValidation.checkJwt,upload.single("profile_picture"),AccountsController.updateAccount)
 export default router;
