@@ -14,7 +14,7 @@ CREATE TABLE post_sections (
     id SERIAL PRIMARY KEY,               -- معرف فريد للقسم
     post_id INT NOT NULL,                -- معرف المنشور الذي ينتمي إليه القسم
     section_order INT NOT NULL,          -- ترتيب القسم داخل المنشور
-    type VARCHAR(50) CHECK (type IN ('text', 'image', 'video', 'code', 'link','ducument')), -- نوع القسم
+    type VARCHAR(50) CHECK (type IN ('text', 'image/file', 'video/file', 'code/text', 'link/file','ducument/file')), -- نوع القسم
     content TEXT NOT NULL,               -- محتوى القسم (نص، رابط صورة، كود برمجي...)
     metadata JSONB DEFAULT '{}'::jsonb,  -- بيانات إضافية (مثلا لغة البرمجة إذا كان كود)
     created_at TIMESTAMP DEFAULT NOW()   -- تاريخ الإضافة
@@ -30,3 +30,5 @@ CREATE INDEX idx_posts_created_at ON posts(created_at DESC); -- لتحسين ت�
 CREATE INDEX idx_posts_visibility ON posts(visibility);   -- لتحسين البحث عن المنشورات العامة
 CREATE INDEX idx_post_sections_post_id ON post_sections(post_id); -- لتسريع البحث عن أقسام المنشور
 CREATE INDEX idx_post_sections_order ON post_sections(post_id, section_order); -- لتسريع ترتيب الأقسام
+
+CREATE INDEX idx_post_sections_metadata ON post_sections USING GIN (metadata);

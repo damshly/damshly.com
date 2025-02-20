@@ -1,13 +1,19 @@
 import { Router } from "express";
-import { getPosts, getPostById } from "../controllers/posts.controller";
-
+import { postController  } from "../controllers/posts.controller";
+import { AuthValidation } from "../middleware/auth.validation";
+import { uploadPosts } from "../middleware/uploadPosts";
+import { validatePostData } from "../middleware/files.validation";
+import { postActionController } from "../controllers/posts.controller";
+import {formatpostections} from "../middleware/formatpostections"
+import multer from "multer";
 const router = Router();
+const upload = uploadPosts.array("files", 10)
 
-router.post("/",);
-
-router.get("/:id");
+router.post("/",AuthValidation.checkJwt,upload,validatePostData,formatpostections,postActionController.makePost);
+router.get("/:id",postController.getPostById);
+router.get("/:id/info",postController.getPostInfoById);
 router.put("/:id");
-router.delete("/:id");
+router.delete("/:id");      
 
 router.get("user/:id");
 
