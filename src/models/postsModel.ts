@@ -61,5 +61,18 @@ export class PostModel {
           client.release();
         }
       }
+
+      static async getAllPosts() {
+        try {
+          const query = "SELECT id, user_id, title, description, visibility, created_at FROM posts ORDER BY created_at DESC";
+          const { rows } = await pool.query(query);
+          return rows;
+        } catch (error) {
+          console.error("❌ خطأ أثناء جلب جميع المنشورات:", error);
+          throw error;
+        }
+      }
+      
+      
     
 }

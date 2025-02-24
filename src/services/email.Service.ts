@@ -34,7 +34,8 @@ export const sendMail = async (to: string, subject: string, htmlContent: string)
 
 export const sendVerificationEmail = async (to: string, token: string) => {
     const verificationUrl = `${process.env.APP_URL}/api/auth/verify-email?token=${token}`;
-
+    console.log("Verification URL:", verificationUrl);
+    
     try {
         const result = await mailjetClient
             .post("send", { version: "v3.1" })
@@ -53,7 +54,7 @@ export const sendVerificationEmail = async (to: string, token: string) => {
                         ],
                         Subject: "Email Verification",
                         HTMLPart: `<p>Click the link below to verify your email:</p>
-                                   <a href="${verificationUrl}">${verificationUrl}</a>`,
+                                   <a href="${verificationUrl}">clic here</a>`,
                     },
                 ],
             });

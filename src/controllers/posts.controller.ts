@@ -49,6 +49,19 @@ export class postController {
       res.status(500).json({ error: "❌ فشل في جلب البيانات" });
     }
   }  
+
+  static async getPostsInfo(req: Request, res: Response) {
+    try {
+      // جلب جميع المنشورات بدون الأقسام
+      const posts = await PostModel.getAllPosts(); 
+  
+      res.status(200).json({ posts });
+    } catch (error) {
+      console.error("❌ خطأ أثناء جلب المنشورات:", error);
+      res.status(500).json({ error: "❌ فشل في جلب البيانات" });
+    }
+  }
+  
   // static getCommentsByPostId = (req: Request, res: Response) => {}
   
   static getAllUserPosts = (req: Request, res: Response) => {};
@@ -83,6 +96,7 @@ export class postActionController {
         console.error("❌ خطأ أثناء إدخال البيانات:", error);
         res.status(500).json({ error: "❌ فشل في إدخال البيانات" });
     }
+
 }
   
   // static editPost = (req: Request, res: Response) => {}

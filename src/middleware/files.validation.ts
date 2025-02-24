@@ -3,6 +3,12 @@ import { Request, Response, NextFunction } from "express";
 export const validatePostData = (req: Request, res: Response, next: NextFunction) => {
     try {
 
+        if (!req.files) {
+            {res.status(400).json({ error: "❌ لم يتم رفع أي ملف" });}  
+            return 
+        }  
+        console.log(req.files);
+        
         const { descriptions, texts ,metadatas} = req.body;
         
         // التحقق من وجود بيانات

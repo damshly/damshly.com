@@ -57,7 +57,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
         // حفظ المستخدم في PostgreSQL عبر UserService
         const user = await UserService.registerUser(decoded.username, decoded.email, decoded.password);
-
+        
         // حذف المستخدم من Redis بعد التسجيل الناجح
         await deleteTempUser(token);
         const accessToken = jwt.sign({ id: user[0].id, role: user[0].account_type }, process.env.JWT_SECRET as string, { expiresIn: "15m" });

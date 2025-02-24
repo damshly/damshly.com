@@ -9,9 +9,10 @@ import multer from "multer";
 const router = Router();
 const upload = uploadPosts.array("files", 10)
 
+router.get("/info",postController.getPostsInfo);
 router.post("/",AuthValidation.checkJwt,upload,validatePostData,formatpostections,postActionController.makePost);
 router.get("/:id",postController.getPostById);
-router.get("/:id/info",postController.getPostInfoById);
+router.get("/info/:id",postController.getPostInfoById);
 router.put("/:id");
 router.delete("/:id");      
 
