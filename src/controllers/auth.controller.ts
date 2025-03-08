@@ -6,6 +6,7 @@ import { UserService } from "../services/user.Service";
 import { UserModel } from "../models/user.model";
 import { saveRefreshToken, getRefreshToken, deleteRefreshToken } from "../services/redis.Service";
 import bcrypt from "bcrypt";
+import Auth from "../services/auth.Service"
 interface registerBody {
     username: string;
     email: string;
@@ -15,13 +16,9 @@ interface registerBody {
 export const register = async (req: Request, res: Response) => {
     const { username, email, password } = req.body;
 
-    const token = jwt.sign({ username, email, password }, process.env.JWT_SECRET as string, {
-        expiresIn: "15m",
-    });
+    const token = Auth.Maketoken({ username, email, password },15 *60)
 
-    // حفظ بيانات المستخدم مؤقتًا في Redis
-    await saveTempUser(token, { username, email, password }, 15 * 60); // 14 دقيقة
-
+    await saveTempUser(token, { username, email, password }, 15 * 60); 
     // إرسال إيميل التحقق
     const emailResult = await sendVerificationEmail(email, token);
 

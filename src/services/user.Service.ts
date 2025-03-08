@@ -20,9 +20,9 @@ export class UserService {
     static async registerUser(username: string, email: string, password_hash: string) {
         // التحقق من عدم وجود المستخدم مسبقًا
         const existingUser = await getUser.byEmail(email);
-        if (existingUser) {
-            throw new Error("User already exists.");
-        }
+        // if (existingUser) {
+        //     throw new Error("User already exists.");
+        // }
 
         // إنشاء المستخدم الجديد
         return await UserModel.createUser({

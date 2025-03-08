@@ -2,7 +2,7 @@ import { Router } from "express";
 import { AccountsController } from "../controllers/accounts.controller";
 import { AuthValidation } from "../middleware/auth.validation";
 import { AccountValidation } from "../middleware/account.validation";
-import {upload} from "../middleware/uploadFile"
+import {upload} from "../middleware/uploadProfilePicture"
 const router = Router();
 
 router.get("/",AuthValidation.checkJwt,AccountsController.getAccount)

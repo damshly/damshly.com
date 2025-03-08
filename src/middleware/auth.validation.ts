@@ -62,7 +62,8 @@ export class AuthValidation {
             res.status(401).json({ message: "Unauthorized" });
             return;
         }
-
+        // console.log((req as any).user, "req.user");
+        
         next();
     };
     

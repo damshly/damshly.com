@@ -18,3 +18,14 @@ CREATE TABLE users (
     location VARCHAR(255),
     contact_number VARCHAR(20)
 );
+
+
+CREATE INDEX idx_users_status ON users (status);
+
+
+CREATE INDEX idx_users_created_at ON users (created_at);
+
+
+CREATE INDEX idx_users_updated_at ON users (updated_at);
+
+

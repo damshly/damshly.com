@@ -8,8 +8,11 @@ const minioEndpoint = process.env.MINIO_ENDPOINT;
 const minioPort = process.env.MINIO_PORT;
 export class AccountsController {
     static getAccount = async (req: Request, res: Response) => {
-        const id :number = req.body.id;
+        const id :number = (req as any).user.id;
         const account = await Account.byId( id);
+        // console.log(account, "account");
+        // console.log(id, "id");
+        
         res.status(200).json(account)
     };
 

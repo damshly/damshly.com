@@ -1,7 +1,7 @@
 import Redis from "ioredis";
 
 const redis = new Redis({
-  host: "127.0.0.1", // أو اسم الخدمة في Docker مثل "redis_cache"
+  host: process.env.REDIS_HOST, // أو اسم الخدمة في Docker مثل "redis_cache"
   port: 6379,
 });
 
