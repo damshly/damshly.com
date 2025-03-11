@@ -9,6 +9,8 @@ CREATE TABLE posts (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+ALTER TABLE sections ALTER COLUMN id SET DEFAULT gen_random_uuid();
 
 CREATE INDEX idx_posts_user_id ON posts(user_id);
 
@@ -16,6 +18,8 @@ CREATE TABLE sections (
     id UUID PRIMARY KEY,
     post_id INTEGER NOT NULL,
     section_type VARCHAR(50) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
     position INT NOT NULL,
     CONSTRAINT fk_post FOREIGN KEY(post_id) REFERENCES posts(id)
 );
