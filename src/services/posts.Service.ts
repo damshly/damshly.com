@@ -15,10 +15,10 @@ export class PostsService {
         console.log(sections);
         await PostQuerys.addSections(post.id, sections);
         // res.json(post);
-        // const texts = req.body.text;
-        // texts.forEach(async (text: any) => {
-        //   await PostQuerys.addTextSection(post.id, text);
-        // });
+        const texts = req.body.text;
+        texts.forEach(async (text: any) => {
+          await PostQuerys.addTextSection(post.id, text);
+        });
         return post
     
       }

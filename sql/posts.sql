@@ -10,7 +10,6 @@ CREATE TABLE posts (
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-ALTER TABLE sections ALTER COLUMN id SET DEFAULT gen_random_uuid();
 
 CREATE INDEX idx_posts_user_id ON posts(user_id);
 
@@ -23,6 +22,7 @@ CREATE TABLE sections (
     position INT NOT NULL,
     CONSTRAINT fk_post FOREIGN KEY(post_id) REFERENCES posts(id)
 );
+ALTER TABLE sections ALTER COLUMN id SET DEFAULT gen_random_uuid();
 
 CREATE INDEX idx_sections_post_id ON sections(post_id);
 

@@ -24,10 +24,16 @@ export const deleteTempUser = async (token: string) => {
 };
 
 export const saveRefreshToken = async (userId: number, refreshToken: string) => {
+    console.log(userId, refreshToken,"saving refresh token");
+    
     const tokenId = randomUUID(); // إنشاء معرف فريد لكل Refresh Token
     const hashedToken = await bcrypt.hash(refreshToken, 10); // تشفير التوكن
     
     await redis.setex(`refresh:${tokenId}`, 7 * 24 * 60 * 60, JSON.stringify({ userId, hashedToken }));
+    console.log("refresh token saved");
+    const data = await redis.get(`refresh:${tokenId}`);
+    console.log(data);
+    
     return tokenId; // إرجاع معرف التوكن وليس التوكن نفسه
 };
 
