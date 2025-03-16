@@ -82,7 +82,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
     const { password, email } = req.body;
     const user = await UserModel.checkPassword(email, password);
-
+    
     if (!user) {
         res.status(401).json({ message: "Invalid credentials" });
         return
@@ -123,7 +123,7 @@ export const logout = async (req: Request, res: Response) => {
 
 export const refreshToken = async (req: Request, res: Response) => {
     const refreshTokenId = req.cookies.refreshToken; 
-
+    
     const tokenData = await getRefreshToken(refreshTokenId);
     if (!tokenData) {
         res.status(403).json({ message: "Invalid refresh token" });

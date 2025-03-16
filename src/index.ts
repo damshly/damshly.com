@@ -5,7 +5,7 @@ import cors from "cors";
 import helmet from "helmet";
 import pool from "./config/database"; // استيراد الاتصال
 import routes from "./routes/index.routes";
-import { setupSwagger } from "./docs/swagger";
+// import { setupSwagger } from "./docs/swagger";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -20,7 +20,7 @@ app.use(cors());
 app.use(helmet());
 
 
-setupSwagger(app);
+// setupSwagger(app);
 
 
 app.use("/api", routes);

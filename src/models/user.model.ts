@@ -1,5 +1,5 @@
 import pool from "../config/database";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 interface User {
     id: number;
     username: string;

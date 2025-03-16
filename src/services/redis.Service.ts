@@ -1,7 +1,7 @@
 import Redis from "ioredis";
 import dotenv from "dotenv";
 import { randomUUID } from "crypto";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 dotenv.config();
 
