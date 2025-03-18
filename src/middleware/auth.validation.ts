@@ -57,12 +57,12 @@ export class AuthValidation {
         }
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: number };
-            (req as any).user = { id: decoded.id }; // قم بتخزينه في `req.user`
+            (req as any).user = { id: decoded.id }; 
         } catch (error) {
             res.status(401).json({ message: "Unauthorized" });
             return;
         }
-        // console.log((req as any).user, "req.user");
+     
         
         next();
     };
@@ -77,7 +77,7 @@ export class AuthValidation {
         return
     }
 
-    // إذا كان التوكن موجودًا، نمرر التحكم للدالة التالية
+   
     next();
 };
 

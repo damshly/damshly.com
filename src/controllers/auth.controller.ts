@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { getTempUser, deleteTempUser, saveTempUser} from "../services/redis.Service";
 import { sendVerificationEmail } from "../services/email.Service";
 import { UserService } from "../services/user.Service";
-import { UserModel } from "../models/user.model";
+import { UserModel } from "../Repository/user.model";
 import { saveRefreshToken, getRefreshToken, deleteRefreshToken } from "../services/redis.Service";
 import bcrypt from "bcrypt";
 import Auth from "../services/auth.Service"
@@ -19,7 +19,7 @@ export const register = async (req: Request, res: Response) => {
     const token = Auth.Maketoken({ username, email, password },15 *60)
 
     await saveTempUser(token, { username, email, password }, 15 * 60); 
-    // إرسال إيميل التحقق
+     
     const emailResult = await sendVerificationEmail(email, token);
 
     if (!emailResult.success) {
@@ -44,7 +44,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
             password: string;
         };
 
-        // التحقق من وجود بيانات المستخدم في Redis
+      
         const userData = await getTempUser(token);
         console.log(userData);
         
@@ -52,10 +52,10 @@ export const verifyEmail = async (req: Request, res: Response) => {
              res.status(400).json({ error: "Invalid or expired token." });
         }
 
-        // حفظ المستخدم في PostgreSQL عبر UserService
+       
         const user = await UserService.registerUser(decoded.username, decoded.email, decoded.password);
         
-        // حذف المستخدم من Redis بعد التسجيل الناجح
+       
         await deleteTempUser(token);
         const accessToken = jwt.sign({ id: user[0].id, role: user[0].account_type }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
         const refreshToken = jwt.sign({ id: user[0].id }, process.env.JWT_SECRET as string, { expiresIn: "7d" });
@@ -94,10 +94,10 @@ export const login = async (req: Request, res: Response) => {
     const refreshTokenId = await saveRefreshToken(user[0].id, refreshToken);
 
     res.cookie("refreshToken", refreshTokenId, {
-        httpOnly: true, // يمنع الوصول إليه عبر JavaScript
-        secure: true, // يجعله يعمل فقط مع HTTPS
-        sameSite: "strict", // يمنع هجمات CSRF
-        maxAge: 7 * 24 * 60 * 60 * 1000, // أسبوع كامل
+        httpOnly: true, 
+        secure: true, 
+        sameSite: "strict",  
+        maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({ user: user[0], accessToken, message: "successful" });

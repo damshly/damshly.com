@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Account } from "../models/accountModel"
+import { Account } from "../Repository/accountModel"
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -10,8 +10,7 @@ export class AccountsController {
     static getAccount = async (req: Request, res: Response) => {
         const id :number = (req as any).user.id;
         const account = await Account.byId( id);
-        // console.log(account, "account");
-        // console.log(id, "id");
+
         
         res.status(200).json(account)
     };
@@ -21,7 +20,7 @@ export class AccountsController {
         if (!id) {
             res.status(400).json({ error: "❌ يجب إرسال ID المستخدم" });
             return 
-        } // استخدم `req.user.id` بدلاً من `req.body.id`
+        } 
 
         if(req.file){
             const fileLocation = (req.file as any).location;

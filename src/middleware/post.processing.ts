@@ -25,11 +25,12 @@ export const processPost = (req: Request, res: Response, next: NextFunction) => 
     try {
         texts = Array.isArray(body.texts)
         ? body.texts
-              .filter((item: string) => typeof item === "string" && item.trim()) // نتأكد إنها نصوص + غير فارغة
+              .filter((item: string) => typeof item === "string" && item.trim()) 
               .map((item: string, index: number) => {
+                let safeItem
                   try {
-                      // نتأكد من إزالة أي مشاكل متعلقة بالأسطر الجديدة أو الأحرف الغريبة
-                      const safeItem = item.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+                      
+                    safeItem = item.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
                       const parsed = JSON.parse(safeItem);
                       return { ...parsed, type: 'text' };
                     } catch (error) {
@@ -45,7 +46,7 @@ export const processPost = (req: Request, res: Response, next: NextFunction) => 
         return 
     }
     
-    // console.log(texts); // تأكد إن كل شيء صحيح
+   
     
 
     let media: MediaSection[] = [];
@@ -58,7 +59,7 @@ export const processPost = (req: Request, res: Response, next: NextFunction) => 
                 type: 'media',
                 location: file.location,
                 caption: file.metadata.caption,
-                mimeType: file.mimetype // ✅ إضافة نوع الملف
+                mimeType: file.mimetype 
             }));
             
         } catch (error) {

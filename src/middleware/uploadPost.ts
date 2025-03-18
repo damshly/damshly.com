@@ -11,7 +11,7 @@ export const upload = multer({
         acl: "public-read",
         key: (req, file, cb) => {
             const fileName = `post-${Date.now()}-${file.originalname}`;
-            // console.log("Saving file:", fileName); // تأكد أن هذا يُطبع
+         
             cb(null, fileName);
         }
     }),
@@ -21,7 +21,7 @@ export const upload = multer({
             console.error("❌ File is missing in fileFilter");
             return cb(new Error("❌ No file provided"));
         }
-        // console.log(file.mimetype); // تحقق من نوع الملف
+       
         if (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/") || file.mimetype.startsWith("application/")) {
             cb(null, true);
         } else {

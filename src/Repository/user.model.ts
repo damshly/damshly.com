@@ -39,15 +39,15 @@ export class getUser{
 
 
 export class UserModel {
-    // ✅ دالة لإنشاء مستخدم جديد مع تخزين كلمة المرور مجزأة
+  
     static async createUser(user: Partial<User>) {
         const { username, email, password_hash } = user;
 
         if (!password_hash) {
-            throw new Error("❌ يجب إدخال كلمة مرور");
+            throw new Error("❌ enter the password");
         }
     
-        // 🔹 تجزئة كلمة المرور قبل الحفظ
+ 
         const saltRounds = 10;
         user.password_hash = await bcrypt.hash(password_hash, saltRounds);
 
@@ -56,15 +56,15 @@ export class UserModel {
             [username, email, user.password_hash]
         );
 
-        return rows[0]; // إرجاع المستخدم الذي تم إنشاؤه
+        return rows[0]; 
     }
 
-    // ✅ دالة للتحقق من كلمة المرور عند تسجيل الدخول
+ 
     static async checkPassword(email: string, password: string) {
         const user = await getUser.byEmail(email);
-        if (!user) return false; // المستخدم غير موجود
+        if (!user) return false;
         const { password_hash } = user[0];
         const isMatch = await bcrypt.compare(password, password_hash);
-        return isMatch ? user : false; // إرجاع المستخدم إذا كانت كلمة المرور صحيحة
+        return isMatch ? user : false; 
     }
 }

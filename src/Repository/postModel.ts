@@ -32,7 +32,7 @@ interface media_section {
     media_type : string;
 }
 
-export class PostQuerys {
+export class postQuerys {
     static async createPost(user_id: number, title: string, description: string) {
         const { rows } = await pool.query<Post>(
             "INSERT INTO posts (user_id, title, description) VALUES ($1, $2, $3) RETURNING *",
@@ -67,4 +67,34 @@ export class PostQuerys {
         );
         return rows[0];
     }
+
+    static async getPostById(post_id: number) {
+        const { rows } = await pool.query<Post>(
+            "SELECT * FROM posts WHERE id = $1",
+            [post_id]
+        );
+        return rows[0];
+    }
+    static async getSectionsByPostId(post_id: number) {
+        const { rows } = await pool.query<section>(
+            "SELECT * FROM sections WHERE post_id = $1",
+            [post_id]
+        );
+        return rows;
+    }
+    static async getTextSectionBySectionId(section_id: number) {
+        const { rows } = await pool.query<text_section>(
+            "SELECT * FROM text_sections WHERE section_id = $1",
+            [section_id]
+        );
+        return rows[0];
+    }
+    static async getMediaSectionBySectionId(section_id: number) {
+        const { rows } = await pool.query<media_section>(
+            "SELECT * FROM media_sections WHERE section_id = $1",
+            [section_id]
+        );
+        return rows[0];
+    }
+
 }

@@ -1,25 +1,24 @@
 import { Request, Response } from "express";
 import pool from "../config/database";
-import {Account} from "../models/accountModel"
+import {Account} from "../Repository/accountModel"
 export const minio = async (req :Request, res :Response) => {
   try {
       if (!req.file) {
           return res.status(400).json({ error: "❌ لم يتم رفع أي ملف" });
       }
 
-      const userId = req.body.userId; // تأكد من إرسال userId مع الطلب
+      const userId = req.body.userId; 
       if (!userId) {
           return res.status(400).json({ error: "❌ يجب إرسال userId" });
       }
 
-      const imageUrl = (req.file as any).location; // رابط الصورة في MinIO
+      const imageUrl = (req.file as any).location; 
 
-      // 🔹 تحديث الصورة في قاعدة البيانات
       await Account.update({ profile_picture: imageUrl }, userId);
 
-      res.json({ success: true, message: "✅ تم رفع الصورة بنجاح", imageUrl });
+      res.json({ success: true, message: "✅ profile picture uploaded successfully", imageUrl });
   } catch (error) {
-      console.error("❌ خطأ أثناء رفع الصورة:", error);
-      res.status(500).json({ error: "❌ حدث خطأ أثناء رفع الصورة" });
+      console.error("❌ error during profile picture upload", error);
+      res.status(500).json({ error: "❌ error during profile picture upload" });
   }
 };

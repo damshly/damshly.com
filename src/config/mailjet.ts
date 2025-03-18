@@ -1,7 +1,7 @@
 import mailjet from "node-mailjet";
 import dotenv from "dotenv";
 
-dotenv.config(); // تحميل المتغيرات من .env
+dotenv.config(); 
 
 export const mailjetClient = mailjet.apiConnect(
     process.env.MAILJET_API_KEY as string,

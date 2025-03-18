@@ -1,6 +1,5 @@
-import { UserModel } from "../models/user.model";
+import { UserModel } from "../Repository/user.model";
 import { saveRefreshToken, getRefreshToken, deleteRefreshToken } from "../services/redis.Service";
-import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "../services/email.Service";
 import { getTempUser, deleteTempUser, saveTempUser} from "../services/redis.Service";
 import jwt from "jsonwebtoken";

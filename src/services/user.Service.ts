@@ -1,4 +1,4 @@
-import { getUser ,UserModel } from "../models/user.model";
+import { getUser ,UserModel } from "../Repository/user.model";
 
 
 export const getUserData = async (type: "id" | "email" | "username", value: string | number) => {
@@ -18,18 +18,18 @@ export const getUserData = async (type: "id" | "email" | "username", value: stri
 
 export class UserService {
     static async registerUser(username: string, email: string, password_hash: string) {
-        // التحقق من عدم وجود المستخدم مسبقًا
+        // Check if user already exists
         const existingUser = await getUser.byEmail(email);
         // if (existingUser) {
         //     throw new Error("User already exists.");
         // }
 
-        // إنشاء المستخدم الجديد
+        // Create new user
         return await UserModel.createUser({
             username,
             email,
             password_hash
-                });
+        });
     }
 
 }

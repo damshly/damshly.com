@@ -1,4 +1,4 @@
-import {mailjetClient} from "../config/mailjet";
+import { mailjetClient } from "../config/mailjet";
 
 export const sendMail = async (to: string, subject: string, htmlContent: string) => {
     try {
@@ -14,7 +14,7 @@ export const sendMail = async (to: string, subject: string, htmlContent: string)
                         To: [
                             {
                                 Email: to,
-                                Name: to.split("@")[0], // استخدام الجزء الأول من البريد كاسم
+                                Name: to.split("@")[0], // Use the first part of the email as a name
                             },
                         ],
                         Subject: subject,
@@ -31,11 +31,10 @@ export const sendMail = async (to: string, subject: string, htmlContent: string)
     }
 };
 
-
 export const sendVerificationEmail = async (to: string, token: string) => {
     const verificationUrl = `${process.env.APP_URL}/api/auth/verify-email?token=${token}`;
     console.log("Verification URL:", verificationUrl);
-    
+
     try {
         const result = await mailjetClient
             .post("send", { version: "v3.1" })
@@ -54,7 +53,7 @@ export const sendVerificationEmail = async (to: string, token: string) => {
                         ],
                         Subject: "Email Verification",
                         HTMLPart: `<p>Click the link below to verify your email:</p>
-                                   <a href="${verificationUrl}">clic here</a>`,
+                                   <a href="${verificationUrl}">Click here</a>`,
                     },
                 ],
             });

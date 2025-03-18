@@ -3,7 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
-import pool from "./config/database"; // استيراد الاتصال
+import pool from "./config/database"; 
 import routes from "./routes/index.routes";
 // import { setupSwagger } from "./docs/swagger";
 import cookieParser from "cookie-parser";
@@ -26,13 +26,14 @@ app.use(helmet());
 app.use("/api", routes);
 
 app.listen(PORT, async () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 
-  // اختبار الاتصال بقاعدة البيانات عند بدء التشغيل
+  // test database connection on startup
   try {
     const res = await pool.query("SELECT NOW()");
-    console.log("📅 Database Time:", res.rows[0].now);
+    console.log("Database Time:", res.rows[0].now);
   } catch (error) {
-    console.error("❌ Database connection failed:", error);
+    console.error("Database connection failed:", error);
   }
 });
+

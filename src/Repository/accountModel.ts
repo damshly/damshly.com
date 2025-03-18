@@ -22,7 +22,7 @@ export class Account{
             "SELECT id, username, email, first_name, last_name, date_of_birth, bio, updated_at, status, account_type, is_verified, profile_picture, location FROM users WHERE id = $1",
             [id]
         );
-        return rows[0]; // إرجاع المستخدم الواحد فقط
+        return rows[0];
     };
 
     static async update(columns: Partial<User>, id: number) {
@@ -40,7 +40,7 @@ export class Account{
         const keys: string[] = [];
         const values: any[] = [];
 
-        // تصفية المفاتيح المسموح بها فقط
+       
         Object.entries(columns).forEach(([key, value], index) => {
             if (allowedKeys.has(key)) {
                 keys.push(`${key} = $${keys.length + 1}`);
@@ -48,12 +48,12 @@ export class Account{
             }
         });
 
-        // منع تشغيل استعلام UPDATE فارغ
+        
         if (keys.length === 0) {
-            throw new Error("لم يتم إرسال بيانات صحيحة للتحديث");
+            throw new Error("error in sent data");
         }
         
-        // بناء الاستعلام
+       
         const query = `
             UPDATE users 
             SET ${keys.join(", ")}
@@ -61,14 +61,14 @@ export class Account{
             RETURNING *;
         `;
         
-        // تنفيذ الاستعلام
+        
         await pool.query<User>(query, [...values, id]);
         const { rows } = await pool.query<User>(
             "SELECT id, username, email, first_name, last_name, date_of_birth, bio, updated_at, status, account_type, is_verified, profile_picture, location FROM users WHERE id = $1",
             [id]
         );
         
-        return rows[0]; // إرجاع المستخدم بعد التحديث
+        return rows[0]; 
     }
 
 }
