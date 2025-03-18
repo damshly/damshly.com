@@ -53,7 +53,9 @@ export const sendVerificationEmail = async (to: string, token: string) => {
                         ],
                         Subject: "Email Verification",
                         HTMLPart: `<p>Click the link below to verify your email:</p>
-                                   <a href="${verificationUrl}">Click here</a>`,
+                                   <a href="${verificationUrl}">Click here</a>
+                                   <p>Or copy and paste this link in your browser: {${verificationUrl}}</p>`
+                                   ,
                     },
                 ],
             });
