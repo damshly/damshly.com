@@ -1,9 +1,9 @@
 version: '3.8'
 
-# تعريف الشبكات
+
 networks:
-  external:                     # شبكة خارجية (لـ API و MinIO)
-    driver: bridge              # استخدام جسر شبكة افتراضي
+  external:                     
+    driver: bridge             
 
 services:
   # PostgreSQL Service
@@ -13,40 +13,40 @@ services:
     ports:
       - "5432:5432"   
     environment:
-      POSTGRES_USER: ${DB_USER}           # اسم المستخدم من .env
-      POSTGRES_PASSWORD: ${DB_PASSWORD}   # كلمة المرور من .env
-      POSTGRES_DB: ${DB_NAME}             # اسم قاعدة البيانات من .env
+      POSTGRES_USER: ${DB_USER}          
+      POSTGRES_PASSWORD: ${DB_PASSWORD}  
+      POSTGRES_DB: ${DB_NAME}            
     networks:
-      - external                         # استخدام الشبكة الخارجية
+      - external                      
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # تخزين البيانات بشكل دائم
+      - postgres_data:/var/lib/postgresql/data 
 
   # Redis Service
   redis:
     image: redis:7
     container_name: redis_cache
     ports:
-      - "6379:6379"                       # تعريض منفذ Redis للشبكة الخارجية
+      - "6379:6379"                      
     networks:
-      - external                          # استخدام الشبكة الخارجية
+      - external                          
     volumes:
       - redis_data:/data  
-    command: ["redis-server", "--appendonly", "yes"]                # تخزين البيانات بشكل دائم
+    command: ["redis-server", "--appendonly", "yes"]               
 
   # MinIO Service
   minio:
     image: minio/minio:latest
     container_name: minio_storage
     environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}     # اسم المستخدم من .env
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY} # كلمة المرور من .env
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}    
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
     ports:
-      - "9000:9000"                           # تعريض واجهة المستخدم (UI)
-      - "9001:9001"                           # تعريض API
+      - "9000:9000"                         
+      - "9001:9001"                          
     networks:
-      - external                             # استخدام الشبكة الخارجية
+      - external                            
     volumes:
-      - minio_data:/data                      # تخزين البيانات بشكل دائم
+      - minio_data:/data                      
     command: server /data --console-address ":9001"
 
 
