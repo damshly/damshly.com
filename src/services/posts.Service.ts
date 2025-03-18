@@ -1,42 +1,33 @@
-import { PostQuerys } from "../models/postModel";
+import { PostQuerys} from "../models/postModel";
 
 export class PostsService {
   static async createPost(req : any, res : any) {
     const{title, description,sections} = req.body
     const user_id = (req as any).user.id
     // console.log(title, description,sections, user_id);
-    const post ={user_id, title, description}
+    // const post ={user_id, title, description}
+    // console.log(sections);
+    
+    const post = await PostQuerys.createPost(user_id, title, description);
     console.log(post);
+    
     for (const section of sections) {
       if (section.type == "text") {
         // console.log(section);
+        const text = await PostQuerys.addSection(post.id, section.type, section.title, section.description, section.so);
+        const text_section = await PostQuerys.addTextSection(text.id, section.content);
+        console.log(text , text_section);
+        
       }
       else if (section.type == "media") {
-        console.log(section);
+        const media = await PostQuerys.addSection(post.id, section.type, section.title, section.description, section.so);
+        const media_section = await PostQuerys.addMediaSection(media.id, section.location, section.caption, section.mimeType);
+        console.log(media,media_section);
+        
       }
     }
+    // const endpost = {post,sections}
     res.send("ok")
     return
   }
-    static async createTextPost(req: any) {
-        const account_id :number = (req as any).user.id;
-        const { title, description } = req.body;
-        console.log(account_id, title, description);
-        
-        const post = await PostQuerys.createPost(account_id, title, description);
-
-        
-        console.log(req.body.sections);
-        console.log(Array.isArray(req.body.sections));
-        const sections = req.body.sections.map((section: string) => JSON.parse(section));
-        console.log(sections);
-        await PostQuerys.addSections(post.id, sections);
-        // res.json(post);
-        const texts = req.body.text;
-        texts.forEach(async (text: any) => {
-          await PostQuerys.addTextSection(post.id, text);
-        });
-        return post
-    
-      }
 }

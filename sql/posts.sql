@@ -32,6 +32,7 @@ CREATE TABLE text_sections (
     content TEXT NOT NULL,
     CONSTRAINT fk_section_text FOREIGN KEY(section_id) REFERENCES sections(id)
 );
+ALTER TABLE text_sections ALTER COLUMN id SET DEFAULT gen_random_uuid();
 
 CREATE INDEX idx_text_sections_section_id ON text_sections(section_id);
 

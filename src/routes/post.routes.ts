@@ -8,8 +8,6 @@ const router = Router();
 
 router.post("/",
     AuthValidation.checkJwt,
-     upload.array("media",10), processFiles,processPost,
-PostsController.createPost
-);
+     upload.array("media",10), processFiles,processPost,PostsController.createPost);
 
 export default router;
