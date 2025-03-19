@@ -45,6 +45,11 @@ CREATE TABLE media_sections (
     CONSTRAINT fk_section_media FOREIGN KEY(section_id) REFERENCES sections(id)
 );
 
+ALTER TABLE sections ALTER COLUMN id SET DEFAULT gen_random_uuid();
+
+ALTER TABLE media_sections ALTER COLUMN id SET DEFAULT gen_random_uuid();
+
+
 CREATE INDEX idx_media_sections_section_id ON media_sections(section_id);
 
 CREATE TABLE table_sections (

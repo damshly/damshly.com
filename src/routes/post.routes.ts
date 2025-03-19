@@ -7,5 +7,5 @@ import { PostsController } from "../controllers/posts.controller";
 const router = Router();
 
 router.post("/",AuthValidation.checkJwt,upload.array("media",10), processFiles,processPost,PostsController.createPost);
-router.get("/:id",AuthValidation.checkJwt,PostsController.getPost);
+router.get("/:id",PostsController.getPost);
 export default router;
