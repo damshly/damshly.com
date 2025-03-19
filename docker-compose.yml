@@ -60,10 +60,10 @@ services:
       - ./nginx-docker/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./certbot/www:/var/www/certbot
       - ./certbot/conf:/etc/letsencrypt
+    depends_on:
+      - certbot
     networks:
       - external
-    depends_on:
-      - app  # غيّره حسب اسم حاوية التطبيق لديك
 
   # Certbot Service (Let's Encrypt)
   certbot:
