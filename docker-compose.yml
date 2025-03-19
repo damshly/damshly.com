@@ -1,6 +1,5 @@
 version: '3.8'
 
-
 networks:
   external:                     
     driver: bridge             
@@ -49,6 +48,32 @@ services:
       - minio_data:/data                      
     command: server /data --console-address ":9001"
 
+  # Nginx Service
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    depends_on:
+      - certbot
+    networks:
+      - external
+
+  # Certbot Service (Let's Encrypt)
+  certbot:
+    image: certbot/certbot
+    container_name: certbot_ssl
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done"
+    networks:
+      - external
 
 volumes:
   postgres_data:
