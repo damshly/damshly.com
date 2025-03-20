@@ -1,6 +1,6 @@
 import multer from "multer";
 import multerS3 from "multer-s3";
-import { s3 } from "../config/minio";
+import { s3 } from "../../config/minio";
 
 const BUCKET_NAME = "posts-files";
 

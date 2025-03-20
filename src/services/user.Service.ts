@@ -1,3 +1,4 @@
+import e from "express";
 import { getUser ,UserModel } from "../Repository/user.model";
 
 
@@ -18,18 +19,25 @@ export const getUserData = async (type: "id" | "email" | "username", value: stri
 
 export class UserService {
     static async registerUser(username: string, email: string, password_hash: string) {
-        // Check if user already exists
-        const existingUser = await getUser.byEmail(email);
-        // if (existingUser) {
-        //     throw new Error("User already exists.");
-        // }
-
+        
+        try {
+            const createdUser = await UserModel.createUser({
+                username,
+                email,
+                password_hash
+            });
+            return createdUser;
+            
+        } catch (error: any) {
+            if (error.code === "23505") { 
+                if (error.detail.includes("email")) {
+                    throw { status: 409, message: "This email is already registered." };
+                } else if (error.detail.includes("username")) {
+                    throw { status: 409, message: "This username is already taken." };
+                }
+            }
+            throw { status: 500, message: "An unexpected error occurred." };
+        }
         // Create new user
-        return await UserModel.createUser({
-            username,
-            email,
-            password_hash
-        });
     }
-
 }

@@ -1,12 +1,13 @@
 import { Router } from "express";
-import { login, register, logout, refreshToken , verifyEmail} from "../controllers/auth.controller";
-import { AuthValidation } from "../middleware/auth.validation";
+import { auth } from "../controllers/auth.controller";
+import { authentication } from "../middleware/Authentication/user";
+import { userValidation } from "../middleware/validation/user";
 const router = Router();
 
-router.post("/register", AuthValidation.validateRegister, register);
-router.post("/login",AuthValidation.validateLogin, login);
-router.post("/logout", logout);
-router.post("/refreshToken", AuthValidation.checkRefreshToken, refreshToken);
-router.get("/verify-email", verifyEmail);
+router.post("/register", userValidation.registerData, auth.register);
+router.post("/login",userValidation.loginData, auth.login);
+router.post("/logout", auth.logout);
+router.post("/refreshToken", authentication.checkRefreshToken, auth.refreshToken);
+router.get("/verify-email", auth.verifyEmail);
 
 export default router;
