@@ -5,8 +5,7 @@ import cors from "cors";
 import helmet from "helmet";
 import pool from "./config/database"; 
 import routes from "./routes/index.routes";
-import { logger } from "./otel";
-// import { setupSwagger } from "./docs/swagger";
+import './tracing';// import { setupSwagger } from "./docs/swagger";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -23,17 +22,10 @@ app.use(helmet());
 // setupSwagger(app);
 
 
-app.use("/api", routes);
-logger.emit({
-  severityNumber: 9, // مستوى الخطورة (INFO)
-  severityText: "INFO",
-  body: "✅ OpenTelemetry logging initialized in Bun!",
-  attributes: {
-    "custom.key": "custom_value",
-  },
+app.get('/', (req, res) => {
+  console.log('📩 Received request on /'); // سيتم إرسال هذا إلى Loki
+  res.send('Hello, OTEL!');
 });
-console.log("✅ OpenTelemetry logging initialized in Bun!");
-
 app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
 
