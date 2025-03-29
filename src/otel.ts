@@ -1,23 +1,42 @@
-import { logs } from "@opentelemetry/api";
-import { LoggerProvider, SimpleLogRecordProcessor } from "@opentelemetry/sdk-logs";
-import { Resource } from "@opentelemetry/resources";
-import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
-import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
+import { resourceFromAttributes } from '@opentelemetry/resources';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { LoggerProvider, SimpleLogRecordProcessor } from '@opentelemetry/sdk-logs';
+import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http';
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 
-// إعداد المصدّر (Exporter) لإرسال الـ logs عبر HTTP إلى OpenTelemetry Collector
+// إعداد المورد (Resource)
+const resource = resourceFromAttributes({
+  [SemanticResourceAttributes.SERVICE_NAME]: 'damshly_blog',
+});
+
+// إعداد OpenTelemetry Tracing باستخدام NodeTracerProvider
+const provider = new NodeTracerProvider({
+  resource,
+  spanProcessors: [
+    new SimpleSpanProcessor(new ConsoleSpanExporter()),
+  ],
+});
+provider.register();
+
+// إعداد OpenTelemetry Logging
+const loggerProvider = new LoggerProvider();
 const exporter = new OTLPLogExporter({
-  url: "http://localhost:4318/v1/logs",
+  url: 'http://localhost:4318/v1/logs', // تأكد من أن هذا الرابط يشير إلى الخدمة الصحيحة
 });
-
-// إعداد LoggerProvider مع المعالج (Processor) والمصدر (Exporter)
-const loggerProvider = new LoggerProvider({
-  resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: "damshly_blog",
-  }),
-});
-
 loggerProvider.addLogRecordProcessor(new SimpleLogRecordProcessor(exporter));
-logs.setGlobalLoggerProvider(loggerProvider);
 
-// إنشاء logger لاستخدامه في التطبيق
-export const logger = loggerProvider.getLogger("bun-logger");
+// تمكين التصحيح (Debugging)
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.ALL);
+
+console.log('✅ OpenTelemetry logging initialized');
+
+// تصدير الـ logger لاستخدامه في باقي التطبيق
+export const logger = loggerProvider.getLogger('bun-logger');
+
+// إرسال Test Log عند التشغيل
+logger.emit({
+  severityText: 'INFO',
+  body: 'OpenTelemetry Logging is working!',
+});
