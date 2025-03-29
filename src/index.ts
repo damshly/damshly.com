@@ -19,6 +19,11 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 app.use(helmet());
+
+// setupSwagger(app);
+
+
+app.use("/api", routes);
 logger.emit({
   severityNumber: 9, // مستوى الخطورة (INFO)
   severityText: "INFO",
@@ -28,11 +33,6 @@ logger.emit({
   },
 });
 console.log("✅ OpenTelemetry logging initialized in Bun!");
-
-// setupSwagger(app);
-
-
-app.use("/api", routes);
 
 app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
