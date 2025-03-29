@@ -37,9 +37,10 @@ export const logger = loggerProvider.getLogger('bun-logger');
 
 // إرسال Test Log عند التشغيل
 // إرسال Test Log عند التشغيل
+// إرسال Test Log عند التشغيل
 setTimeout(() => {
     logger.emit({
       severityText: 'INFO',
       body: 'OpenTelemetry Logging is working!',
     });
-  }, 10000); // انتظر 10 ثوانٍ
+  }, 90000); // انتظر 60 ثانية// انتظر 10 ثوانٍ
