@@ -1,11 +1,11 @@
-import express from "express";
+import './tracing'; 
 
+import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 import pool from "./config/database"; 
 import routes from "./routes/index.routes";
-import './tracing';// import { setupSwagger } from "./docs/swagger";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -22,10 +22,8 @@ app.use(helmet());
 // setupSwagger(app);
 
 
-app.get('/', (req, res) => {
-  console.log('📩 Received request on /'); // سيتم إرسال هذا إلى Loki
-  res.send('Hello, OTEL!');
-});
+app.use("/api", routes);
+
 app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
 
