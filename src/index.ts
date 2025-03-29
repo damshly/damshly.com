@@ -5,6 +5,7 @@ import cors from "cors";
 import helmet from "helmet";
 import pool from "./config/database"; 
 import routes from "./routes/index.routes";
+import { logger } from "./otel";
 // import { setupSwagger } from "./docs/swagger";
 import cookieParser from "cookie-parser";
 
@@ -18,7 +19,15 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 app.use(helmet());
-
+logger.emit({
+  severityNumber: 9, // مستوى الخطورة (INFO)
+  severityText: "INFO",
+  body: "✅ OpenTelemetry logging initialized in Bun!",
+  attributes: {
+    "custom.key": "custom_value",
+  },
+});
+console.log("✅ OpenTelemetry logging initialized in Bun!");
 
 // setupSwagger(app);
 
